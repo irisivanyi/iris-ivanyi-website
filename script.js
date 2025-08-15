@@ -1,4 +1,114 @@
+// Portfolio Content Configuration
+const portfolioContent = [
+    {
+        type: 'video',
+        src: 'assets/work/ce-button.mp4',
+        alt: 'Creative button animation',
+        size: 'size-medium',
+        position: { column: 1, row: 1, justify: 'start', align: 'center' }
+    },
+    {
+        type: 'image',
+        src: 'assets/work/de-art-1.jpg',
+        alt: 'Digital art project',
+        size: 'size-large',
+        position: { column: 2, row: 1, justify: 'end', align: 'end' }
+    },
+    {
+        type: 'image',
+        src: 'assets/work/de-art-1.jpg',
+        alt: 'Portfolio piece',
+        size: 'size-small',
+        position: { column: 1, row: 2, justify: 'center', align: 'start' }
+    },
+    {
+        type: 'image',
+        src: 'assets/work/de-art-1.jpg',
+        alt: 'Design work',
+        size: 'size-portrait',
+        position: { column: 2, row: 2, justify: 'start', align: 'center' }
+    },
+    {
+        type: 'placeholder',
+        size: 'size-square',
+        position: { column: 1, row: 3, justify: 'end', align: 'center' }
+    },
+    {
+        type: 'placeholder',
+        size: 'size-medium',
+        position: { column: 2, row: 3, justify: 'start', align: 'end' }
+    },
+    {
+        type: 'placeholder',
+        size: 'size-small',
+        position: { column: 1, row: 4, justify: 'center', align: 'start' }
+    },
+    {
+        type: 'placeholder',
+        size: 'size-large',
+        position: { column: 2, row: 4, justify: 'end', align: 'center' }
+    },
+    {
+        type: 'placeholder',
+        size: 'size-wide',
+        position: { column: 1, row: 5, justify: 'start', align: 'end' }
+    },
+    {
+        type: 'placeholder',
+        size: 'size-square',
+        position: { column: 2, row: 5, justify: 'center', align: 'start' }
+    }
+];
+
+// Function to generate portfolio grid
+function generatePortfolioGrid() {
+    const backgroundGrid = document.querySelector('.background-grid');
+    if (!backgroundGrid) return;
+    
+    // Clear existing content (except the ::after pseudo-element)
+    backgroundGrid.innerHTML = '';
+    
+    // Generate grid items from content array
+    portfolioContent.forEach((item, index) => {
+        const gridItem = document.createElement('div');
+        gridItem.className = `grid-item ${item.size}`;
+        
+        // Set grid positioning
+        const pos = item.position;
+        gridItem.style.gridColumn = `${pos.column}`;
+        gridItem.style.gridRow = `${pos.row}`;
+        gridItem.style.justifySelf = pos.justify;
+        gridItem.style.alignSelf = pos.align;
+        
+        // Add content based on type
+        if (item.type === 'video') {
+            gridItem.classList.add('video-item');
+            gridItem.innerHTML = `
+                <video autoplay muted loop playsinline>
+                    <source src="${item.src}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            `;
+        } else if (item.type === 'image') {
+            gridItem.classList.add('image-item');
+            gridItem.innerHTML = `<img src="${item.src}" alt="${item.alt}">`;
+        } else if (item.type === 'placeholder') {
+            gridItem.classList.add('placeholder');
+        }
+        
+        backgroundGrid.appendChild(gridItem);
+    });
+    
+    // Add spacer element for scroll area
+    const spacer = document.createElement('div');
+    spacer.style.gridColumn = '1 / -1';
+    spacer.style.height = '200vh';
+    backgroundGrid.appendChild(spacer);
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+    // Generate the portfolio grid first
+    generatePortfolioGrid();
     const aboutContainer = document.getElementById('about');
     const h2Content = document.querySelector('.h2-content');
     const toggleButton = document.getElementById('toggle-button');
