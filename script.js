@@ -60,6 +60,11 @@ const portfolioContent = [
     }
 ];
 
+// Function to check if we're on mobile
+function isMobile() {
+    return window.innerWidth <= 768;
+}
+
 // Function to generate portfolio grid
 function generatePortfolioGrid() {
     const backgroundGrid = document.querySelector('.background-grid');
@@ -68,6 +73,8 @@ function generatePortfolioGrid() {
     // Clear existing content (except the ::after pseudo-element)
     backgroundGrid.innerHTML = '';
     
+    const mobile = isMobile();
+    
     // Generate grid items from content array
     portfolioContent.forEach((item, index) => {
         const gridItem = document.createElement('div');
@@ -75,10 +82,19 @@ function generatePortfolioGrid() {
         
         // Set grid positioning
         const pos = item.position;
-        gridItem.style.gridColumn = `${pos.column}`;
-        gridItem.style.gridRow = `${pos.row}`;
-        gridItem.style.justifySelf = pos.justify;
-        gridItem.style.alignSelf = pos.align;
+        
+        if (mobile) {
+            // On mobile: single column, sequential rows
+            gridItem.style.gridColumn = '1';
+            gridItem.style.gridRow = `${index + 1}`;
+            // CSS handles centering with !important rules
+        } else {
+            // Desktop: use original positioning
+            gridItem.style.gridColumn = `${pos.column}`;
+            gridItem.style.gridRow = `${pos.row}`;
+            gridItem.style.justifySelf = pos.justify;
+            gridItem.style.alignSelf = pos.align;
+        }
         
         // Add content based on type
         if (item.type === 'video') {
@@ -101,7 +117,7 @@ function generatePortfolioGrid() {
     
     // Add spacer element for scroll area
     const spacer = document.createElement('div');
-    spacer.style.gridColumn = '1 / -1';
+    spacer.style.gridColumn = mobile ? '1' : '1 / -1';
     spacer.style.height = '200vh';
     backgroundGrid.appendChild(spacer);
 }
@@ -336,4 +352,13 @@ document.addEventListener('DOMContentLoaded', function() {
             collapseContent();
         }
     }, 100);
+    
+    // Handle viewport resize (e.g., device rotation)
+    let resizeTimeout;
+    window.addEventListener('resize', function() {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            generatePortfolioGrid(); // Regenerate grid for new viewport size
+        }, 250); // Debounce resize events
+    });
 });

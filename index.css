@@ -479,3 +479,82 @@ button::before {
 .toggle-button.expanded .horizontal-line {
   transform: scaleX(1.2);
 }
+
+/* Mobile Breakpoints */
+@media screen and (max-width: 768px) {
+  /* Single column grid for mobile */
+  .background-grid {
+    grid-template-columns: 1fr;
+    padding: 1rem;
+    gap: 1.5rem;
+  }
+  
+  /* All content centered and 90% width on mobile */
+  .grid-item {
+    justify-self: center !important;
+    align-self: center !important;
+    width: 90vw !important;
+  }
+  
+  /* Adjust size classes for mobile - maintain aspect ratios */
+  .size-small {
+    width: 90vw;
+    max-width: 350px;
+    aspect-ratio: 3/4;
+  }
+  
+  .size-medium {
+    width: 90vw;
+    max-width: 400px;
+    aspect-ratio: 4/5;
+  }
+  
+  .size-large {
+    width: 90vw;
+    max-width: 450px;
+    aspect-ratio: 16/10;
+  }
+  
+  .size-portrait {
+    width: 90vw;
+    max-width: 300px;
+    aspect-ratio: 9/16;
+  }
+  
+  .size-square {
+    width: 90vw;
+    max-width: 350px;
+    aspect-ratio: 1/1;
+  }
+  
+  .size-wide {
+    width: 90vw;
+    max-width: 500px;
+    aspect-ratio: 21/9;
+  }
+  
+  /* Adjust container positioning for mobile */
+  .about-wrapper {
+    padding: 1rem;
+  }
+  
+  .container {
+    margin: 1rem;
+    padding: 0.15rem;
+  }
+  
+  #about {
+    padding: 1rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+  
+  #find-me {
+    padding: 1rem;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+  }
+}
