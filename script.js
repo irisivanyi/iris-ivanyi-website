@@ -1,11 +1,18 @@
 // Portfolio Content Configuration
+// Available size classes:
+// - size-small: min(45vw, 300px), 3:4 aspect ratio
+// - size-medium: min(50vw, 400px), 4:5 aspect ratio  
+// - size-large: min(60vw, 500px), 16:10 aspect ratio
+// - size-portrait: min(40vw, 320px), 9:16 aspect ratio
+// - size-square: min(45vw, 350px), 1:1 aspect ratio
+// - size-wide: min(70vw, 600px), 21:9 aspect ratio
 const portfolioContent = [
     {
         type: 'video',
         src: 'assets/work/ce-button.mp4',
         alt: 'Creative button animation',
-        size: 'size-medium',
-        position: { column: 1, row: 1, justify: 'start', align: 'center' }
+        size: 'size-large',
+        position: { column: 1, row: 1, justify: 'end', align: 'end' }
     },
     {
         type: 'image',
@@ -65,6 +72,17 @@ function isMobile() {
     return window.innerWidth <= 768;
 }
 
+// Function to sort content for mobile to follow desktop grid logic
+function getSortedContentForMobile(content) {
+    // Sort by row first, then by column within each row
+    return [...content].sort((a, b) => {
+        if (a.position.row !== b.position.row) {
+            return a.position.row - b.position.row;
+        }
+        return a.position.column - b.position.column;
+    });
+}
+
 // Function to generate portfolio grid
 function generatePortfolioGrid() {
     const backgroundGrid = document.querySelector('.background-grid');
@@ -75,8 +93,11 @@ function generatePortfolioGrid() {
     
     const mobile = isMobile();
     
+    // Get content in appropriate order
+    const contentToRender = mobile ? getSortedContentForMobile(portfolioContent) : portfolioContent;
+    
     // Generate grid items from content array
-    portfolioContent.forEach((item, index) => {
+    contentToRender.forEach((item, index) => {
         const gridItem = document.createElement('div');
         gridItem.className = `grid-item ${item.size}`;
         
@@ -84,7 +105,7 @@ function generatePortfolioGrid() {
         const pos = item.position;
         
         if (mobile) {
-            // On mobile: single column, sequential rows
+            // On mobile: single column, follow desktop row/column order
             gridItem.style.gridColumn = '1';
             gridItem.style.gridRow = `${index + 1}`;
             // CSS handles centering with !important rules
@@ -269,7 +290,37 @@ document.addEventListener('DOMContentLoaded', function() {
             h2Content.style.height = '0px';
         });
         aboutContainer.classList.add('collapsed');
-        showToggleButtonCollapsed();
+        
+        // On mobile, implement three-step collapse sequence
+        if (isMobile()) {
+            // Step 1: Content fades out (h2 and buttons) - already happening above
+            // Step 2: After content is hidden, shrink container width
+            setTimeout(() => {
+                const container = aboutContainer.querySelector('.container');
+                const h1 = aboutContainer.querySelector('h1');
+                
+                // Get current width and target width
+                const currentWidth = container.offsetWidth;
+                const targetWidth = h1.offsetWidth + 56; // h1 width + padding (1.4rem * 2 * 16px)
+                
+                // Set explicit current width to enable smooth transition
+                container.style.width = currentWidth + 'px';
+                
+                // Force reflow
+                container.offsetWidth;
+                
+                // Animate to target width
+                container.style.width = targetWidth + 'px';
+                aboutContainer.classList.add('width-shrunk');
+                
+                // Step 3: After width shrinks, show toggle button
+                setTimeout(() => {
+                    aboutContainer.classList.add('toggle-ready');
+                }, 400); // Wait for width transition to complete
+            }, 600); // Wait for h2 content collapse animation to complete
+        } else {
+            showToggleButtonCollapsed();
+        }
     }
 
     // Function to expand h2 content
@@ -285,7 +336,16 @@ document.addEventListener('DOMContentLoaded', function() {
             h2Content.style.height = recalculatedHeight + 'px';
         }
         aboutContainer.classList.remove('collapsed');
-        hideToggleButton(true); // Use scale-out animation when expanding
+        aboutContainer.classList.remove('toggle-ready'); // Clean up mobile-specific class
+        aboutContainer.classList.remove('width-shrunk'); // Clean up mobile-specific class
+        
+        if (isMobile()) {
+            // Clean up inline width style set during collapse animation
+            const container = aboutContainer.querySelector('.container');
+            container.style.width = '';
+        } else {
+            hideToggleButton(true); // Use scale-out animation when expanding on desktop
+        }
         isManuallyExpanded = false;
     }
     

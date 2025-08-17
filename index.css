@@ -379,8 +379,10 @@ button::before {
   grid-auto-rows: 100vh;
   z-index: 0;
   overflow-y: auto;
+  overflow-x: hidden; /* Prevent horizontal overflow */
   gap: 2rem;
   padding: 2rem;
+  box-sizing: border-box; /* Include padding in width calculation */
 }
 
 .grid-item {
@@ -403,7 +405,7 @@ button::before {
 }
 
 .size-large {
-  width: min(60vw, 500px);
+  width: min(60vw, 500px, calc((100vw - 6rem) / 2));
   aspect-ratio: 16/10;
 }
 
@@ -418,7 +420,7 @@ button::before {
 }
 
 .size-wide {
-  width: min(70vw, 600px);
+  width: min(70vw, 600px, calc((100vw - 6rem) / 2));
   aspect-ratio: 21/9;
 }
 
@@ -480,81 +482,112 @@ button::before {
   transform: scaleX(1.2);
 }
 
-/* Mobile Breakpoints */
-@media screen and (max-width: 768px) {
-  /* Single column grid for mobile */
+/* Mobile Layout */
+@media (max-width: 768px) {
   .background-grid {
     grid-template-columns: 1fr;
     padding: 1rem;
     gap: 1.5rem;
   }
   
-  /* All content centered and 90% width on mobile */
   .grid-item {
     justify-self: center !important;
     align-self: center !important;
-    width: 90vw !important;
   }
   
-  /* Adjust size classes for mobile - maintain aspect ratios */
-  .size-small {
-    width: 90vw;
-    max-width: 350px;
-    aspect-ratio: 3/4;
-  }
-  
-  .size-medium {
-    width: 90vw;
-    max-width: 400px;
-    aspect-ratio: 4/5;
-  }
-  
-  .size-large {
-    width: 90vw;
-    max-width: 450px;
-    aspect-ratio: 16/10;
-  }
-  
-  .size-portrait {
-    width: 90vw;
-    max-width: 300px;
-    aspect-ratio: 9/16;
-  }
-  
-  .size-square {
-    width: 90vw;
-    max-width: 350px;
-    aspect-ratio: 1/1;
-  }
-  
+  /* Mobile size overrides - all items use 90vw */
+  .size-small,
+  .size-medium,
+  .size-large,
+  .size-portrait,
+  .size-square,
   .size-wide {
-    width: 90vw;
-    max-width: 500px;
-    aspect-ratio: 21/9;
+    width: 90vw !important;
+    max-width: 90vw !important;
   }
   
-  /* Adjust container positioning for mobile */
-  .about-wrapper {
-    padding: 1rem;
-  }
+  /* Maintain aspect ratios on mobile */
+  .size-small { aspect-ratio: 3/4; }
+  .size-medium { aspect-ratio: 4/5; }
+  .size-large { aspect-ratio: 16/10; }
+  .size-portrait { aspect-ratio: 9/16; }
+  .size-square { aspect-ratio: 1/1; }
+  .size-wide { aspect-ratio: 21/9; }
   
+  /* Fix about container and h2 content on mobile */
   .container {
-    margin: 1rem;
-    padding: 0.15rem;
+    margin: 0.5rem;
+    max-width: calc(100vw - 1rem);
+    width: auto;
   }
   
-  #about {
-    padding: 1rem;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+  .h2-content {
+    max-width: none;
+    width: auto;
   }
   
-  #find-me {
-    padding: 1rem;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-    position: fixed;
-    top: 1rem;
-    right: 1rem;
+  /* Fix button text hugging */
+  button {
+    width: auto;
+    min-width: auto;
+    padding: 0.3rem 0.8rem;
+    white-space: nowrap;
+  }
+  
+  .button-horizontal-stack {
+    flex-wrap: nowrap;
+  }
+  
+  /* Mobile collapsed state: show only h1 and toggle button on same line */
+  
+  /* Step 1: Hide content but keep container width */
+  #about.collapsed .button-horizontal-stack {
+    display: none; /* Hide button stack initially */
+  }
+  
+  /* Step 2: Shrink container width after content is hidden */
+  #about.collapsed .container {
+    transition: width 0.4s ease-out;
+  }
+  
+  #about.collapsed.width-shrunk .container-inner {
+    position: relative;
+    width: fit-content;
+  }
+  
+  #about.collapsed.width-shrunk h1 {
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  
+  /* Step 3: Show toggle button positioned absolutely */
+  #about.collapsed.width-shrunk .button-horizontal-stack {
+    display: flex !important;
+    margin-top: 0;
+    position: absolute;
+    top: 50%;
+    right: 1.4rem;
+    transform: translateY(-50%);
+    width: auto;
+  }
+  
+  #about.collapsed.width-shrunk .button-horizontal-stack a {
+    display: none; /* Hide only the link buttons, keep toggle button */
+  }
+  
+  #about.collapsed.width-shrunk .toggle-button {
+    display: flex !important;
+    opacity: 0;
+    transform: scale(0.7);
+    pointer-events: auto !important;
+    position: relative;
+    margin: 0;
+    flex-shrink: 0;
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+  }
+  
+  #about.collapsed.toggle-ready .toggle-button {
+    opacity: 1 !important;
+    transform: scale(1) !important;
   }
 }
