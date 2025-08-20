@@ -174,6 +174,11 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // Apply scroll capture to all containers, not just interactive elements
+    const containers = document.querySelectorAll('.container');
+    containers.forEach(preventScrollCapture);
+    
+    // Also apply to interactive elements for consistency
     const interactiveElements = document.querySelectorAll('.container button, .container a, .container .toggle-button');
     interactiveElements.forEach(preventScrollCapture);
     
@@ -291,36 +296,8 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         aboutContainer.classList.add('collapsed');
         
-        // On mobile, implement three-step collapse sequence
-        if (isMobile()) {
-            // Step 1: Content fades out (h2 and buttons) - already happening above
-            // Step 2: After content is hidden, shrink container width
-            setTimeout(() => {
-                const container = aboutContainer.querySelector('.container');
-                const h1 = aboutContainer.querySelector('h1');
-                
-                // Get current width and target width
-                const currentWidth = container.offsetWidth;
-                const targetWidth = h1.offsetWidth + 56; // h1 width + padding (1.4rem * 2 * 16px)
-                
-                // Set explicit current width to enable smooth transition
-                container.style.width = currentWidth + 'px';
-                
-                // Force reflow
-                container.offsetWidth;
-                
-                // Animate to target width
-                container.style.width = targetWidth + 'px';
-                aboutContainer.classList.add('width-shrunk');
-                
-                // Step 3: After width shrinks, show toggle button
-                setTimeout(() => {
-                    aboutContainer.classList.add('toggle-ready');
-                }, 400); // Wait for width transition to complete
-            }, 600); // Wait for h2 content collapse animation to complete
-        } else {
-            showToggleButtonCollapsed();
-        }
+        // Use same behavior for both mobile and desktop
+        showToggleButtonCollapsed();
     }
 
     // Function to expand h2 content
@@ -336,16 +313,9 @@ document.addEventListener('DOMContentLoaded', function() {
             h2Content.style.height = recalculatedHeight + 'px';
         }
         aboutContainer.classList.remove('collapsed');
-        aboutContainer.classList.remove('toggle-ready'); // Clean up mobile-specific class
-        aboutContainer.classList.remove('width-shrunk'); // Clean up mobile-specific class
         
-        if (isMobile()) {
-            // Clean up inline width style set during collapse animation
-            const container = aboutContainer.querySelector('.container');
-            container.style.width = '';
-        } else {
-            hideToggleButton(true); // Use scale-out animation when expanding on desktop
-        }
+        // Use same behavior for both mobile and desktop
+        hideToggleButton(true);
         isManuallyExpanded = false;
     }
     

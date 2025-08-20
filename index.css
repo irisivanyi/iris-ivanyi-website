@@ -519,6 +519,7 @@ button::before {
     margin: 0.5rem;
     max-width: calc(100vw - 1rem);
     width: auto;
+    transition: width 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   }
   
   .h2-content {
@@ -538,56 +539,4 @@ button::before {
     flex-wrap: nowrap;
   }
   
-  /* Mobile collapsed state: show only h1 and toggle button on same line */
-  
-  /* Step 1: Hide content but keep container width */
-  #about.collapsed .button-horizontal-stack {
-    display: none; /* Hide button stack initially */
-  }
-  
-  /* Step 2: Shrink container width after content is hidden */
-  #about.collapsed .container {
-    transition: width 0.4s ease-out;
-  }
-  
-  #about.collapsed.width-shrunk .container-inner {
-    position: relative;
-    width: fit-content;
-  }
-  
-  #about.collapsed.width-shrunk h1 {
-    white-space: nowrap;
-    flex-shrink: 0;
-  }
-  
-  /* Step 3: Show toggle button positioned absolutely */
-  #about.collapsed.width-shrunk .button-horizontal-stack {
-    display: flex !important;
-    margin-top: 0;
-    position: absolute;
-    top: 50%;
-    right: 1.4rem;
-    transform: translateY(-50%);
-    width: auto;
-  }
-  
-  #about.collapsed.width-shrunk .button-horizontal-stack a {
-    display: none; /* Hide only the link buttons, keep toggle button */
-  }
-  
-  #about.collapsed.width-shrunk .toggle-button {
-    display: flex !important;
-    opacity: 0;
-    transform: scale(0.7);
-    pointer-events: auto !important;
-    position: relative;
-    margin: 0;
-    flex-shrink: 0;
-    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
-  }
-  
-  #about.collapsed.toggle-ready .toggle-button {
-    opacity: 1 !important;
-    transform: scale(1) !important;
-  }
 }
